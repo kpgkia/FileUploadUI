@@ -1,0 +1,41 @@
+﻿@page "/"
+@model IndexModel
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@{
+    ViewData["Title"] = "File Upload";
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput" />
+    <button type="button" id="uploadButton">Upload</button>
+</form>
+
+<div id="resultMessage"></div>
+
+<script>
+    $(document).ready(function () {
+        $('#uploadButton').click(function () {
+            var fileInput = $('#fileInput')[0];
+            var file = fileInput.files[0];
+
+            var formData = new FormData();
+            formData.append('file', file);
+
+            $.ajax({
+                url: '@Configuration["FileUploadApiUrl"]',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $('#resultMessage').text('File uploaded successfully.');
+                },
+                error: function (error) {
+                    $('#resultMessage').text('An error occurred while uploading the file.');
+                }
+            });
+        });
+    });
+</script>
